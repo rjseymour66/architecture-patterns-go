@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"time"
 )
 
@@ -35,23 +36,40 @@ func NewBatch(ref, sku string, qty int, eta time.Time, alloc []OrderLine) *Batch
 }
 
 // allocate associates an OrderLine to a Batch.
-func (b *Batch) allocate(line OrderLine) (*Batch, error) {
-	// b.purchasedQty -= line.qty
-	return b, nil
+func (b *Batch) allocate(line OrderLine) error {
+	if b.canAllocate(line) {
+		b.allocations = append(b.allocations, line)
+		return nil
+	}
+	return errors.New("cannot allocate orderline")
 }
 
 // deAllocate
-// func (b *Batch) deAllocate(line OrderLine) error {
-// 	for i, l := range b.allocations {
-// 		if l == b.allocations[i] {
-
-// 		}
-// 	}
-// }
+func (b *Batch) deAllocate(line OrderLine) error {
+	for i, l := range b.allocations {
+		if l == b.allocations[i] {
+			b.allocations[i] = b.allocations[len(b.allocations)-1]
+			b.allocations[len(b.allocations)-1] = OrderLine{}
+			b.allocations = b.allocations[:len(b.allocations)-1]
+			return nil
+		}
+	}
+	return errors.New("OrderLine not found in batch")
+}
 
 // allocatedQty // getter method
+func (b *Batch) allocatedQty() int {
+	var sum int
+	for _, val := range b.allocations {
+		sum += val.qty
+	}
+	return sum
+}
 
 // availableQty // getter method
+func (b *Batch) availableQty() int {
+	return b.purchasedQty - b.allocatedQty()
+}
 
 // canAllocate verifies whether the batch has enough quantity to
 // allocate the OrderLine.

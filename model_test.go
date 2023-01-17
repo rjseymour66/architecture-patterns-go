@@ -13,15 +13,15 @@ func TestAllocate(t *testing.T) {
 		qty:     2,
 	}
 
-	got, err := batch.allocate(line)
+	err := batch.allocate(line)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	exp := 18
 
-	if got.purchasedQty != exp {
-		t.Fatalf("Expected %q, got %q instead", exp, got.purchasedQty)
+	if batch.purchasedQty != exp {
+		t.Fatalf("Expected %d, got %d instead", exp, batch.purchasedQty)
 	}
 
 }
@@ -90,3 +90,7 @@ func TestCanAllocate(t *testing.T) {
 		})
 	}
 }
+
+// func TestDeallocate(t *testing.T) {
+
+// }
