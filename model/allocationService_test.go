@@ -5,15 +5,6 @@ import (
 	"time"
 )
 
-/*
-	type Batch struct {
-		Ref          string
-		Sku          string
-		Eta          time.Time
-		purchasedQty int
-		allocations  []OrderLine
-	}
-*/
 func TestAllocationService(t *testing.T) {
 	testCases := []struct {
 		name    string
