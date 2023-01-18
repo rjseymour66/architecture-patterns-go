@@ -41,7 +41,24 @@ Business goals should drive the approach to software design. Behavior should com
 
 The terms _business logic_ and _domain model_ are interchangeable. What they really mean is, "What problem am I trying to solve?". Each 
 
+### Entity
 
+An _entity_ is a domain object that has a persistent, long-lived identity. These objects have unique identifiers, such as UUIDs.
+
+Think about two people and SSNs: there might be 2 men from the same town, with the same birthdate, named Bill Smith, and share every major characteristic, but they are not the same.
+
+Entities have _identity equality_. This is checking that two or more entities are the exact same entity--have the same UUID. In software, this is might mean testing whether two objects of the same type occupy the same address space.
+
+
+### Value object
+
+A _value object_ is any domain object that is uniquely identified by the data that it holds. Whenever there is a business concept that has data but no identity (reference number, ID, etc.), you can represent it as a value object.
+
+A good example is money: a $10 bill is equal to another $10 bill--it doesn't have to be the _exact_ $10 bill to be equal. Both bills are equal in _value_.
+
+### Domain service
+
+A _domain service_ is an operation that doesn't have a natural home as an entity or value object.
 
 ## Patterns
 

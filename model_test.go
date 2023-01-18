@@ -70,15 +70,64 @@ func TestCanAllocate(t *testing.T) {
 	}
 }
 
-func TestAllocatedQty(t *testing.T) {
-	batch := NewBatch("batch-001", "", time.Now(), 0, nil)
-	exp := 12
+// func TestIdempotency(t *testing.T) {
+// 	batch := NewBatch("batch-001", "", time.Now(), 0, nil)
+// 	line := OrderLine{
+// 		orderID: "order-123",
+// 		sku:     "",
+// 		qty:     0,
+// 	}
+// 	testCases := []struct {
+// 		bSku string
+// 		lSku string
+// 		bQty int
+// 		lQty int
+// 		exp  bool
+// 	}{
+// 		{
+// 			bSku: "ELEGANT-LAMP",
+// 			lSku: "ELEGANT-LAMP",
+// 			bQty: 20,
+// 			lQty: 2,
+// 			exp:  true,
+// 		},
+// 		{
+// 			bSku: "ELEGANT-LAMP",
+// 			lSku: "ELEGANT-LAMP",
+// 			bQty: 20,
+// 			lQty: 2,
+// 			exp:  false,
+// 		},
+// 	}
 
-	for i := 0; i < exp; i++ {
-		line := OrderLine{}
-		batch.allocate(line)
+// 	for _, tc := range testCases {
+// 		t.Run(tc.name, func(t *testing.T) {
+// 			batch.Sku = tc.bSku
+// 			batch.purchasedQty = tc.bQty
+// 			line.sku = tc.lSku
+// 			line.qty = tc.lQty
+
+// 			got := batch.canAllocate(line)
+
+// 			if got != tc.exp {
+// 				t.Errorf("Expected %t, got %t", tc.exp, got)
+// 			}
+// 		})
+// 	}
+// }
+
+func TestAllocatedQty(t *testing.T) {
+	batch := NewBatch("batch-001", "TEST1", time.Now(), 1, nil)
+
+	line1 := OrderLine{
+		orderID: "one",
+		sku:     "TEST1",
+		qty:     1,
 	}
 
+	batch.allocate(line1)
+
+	exp := 1
 	got := batch.allocations
 	if exp != len(got) {
 		t.Errorf("Expected %v, got %v", exp, got)
