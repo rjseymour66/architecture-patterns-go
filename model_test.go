@@ -5,29 +5,8 @@ import (
 	"time"
 )
 
-func TestAllocate(t *testing.T) {
-	batch := NewBatch("batch-001", "SMALL-TABLE", 20, time.Now(), nil)
-	line := OrderLine{
-		orderID: "batch-001",
-		sku:     "SMALL-TABLE",
-		qty:     2,
-	}
-
-	err := batch.allocate(line)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	exp := 18
-
-	if batch.purchasedQty != exp {
-		t.Fatalf("Expected %d, got %d instead", exp, batch.purchasedQty)
-	}
-
-}
-
 func TestCanAllocate(t *testing.T) {
-	batch := NewBatch("batch-001", "", 0, time.Now(), nil)
+	batch := NewBatch("batch-001", "", time.Now(), 0, nil)
 	line := OrderLine{
 		orderID: "order-123",
 		sku:     "",
@@ -91,6 +70,48 @@ func TestCanAllocate(t *testing.T) {
 	}
 }
 
-// func TestDeallocate(t *testing.T) {
+func TestAllocatedQty(t *testing.T) {
+	batch := NewBatch("batch-001", "", time.Now(), 0, nil)
+	exp := 12
 
-// }
+	for i := 0; i < exp; i++ {
+		line := OrderLine{}
+		batch.allocate(line)
+	}
+
+	got := batch.allocations
+	if exp != len(got) {
+		t.Errorf("Expected %v, got %v", exp, got)
+	}
+}
+
+func TestDeallocate(t *testing.T) {
+	batch := NewBatch("batch-001", "TEST1", time.Now(), 1, nil)
+
+	line1 := OrderLine{
+		orderID: "one",
+		sku:     "TEST1",
+		qty:     1,
+	}
+
+	batch.allocate(line1)
+
+	if len(batch.allocations) != 1 {
+		t.Errorf("Did not allocate")
+	}
+
+	batch.deallocate(line1)
+
+	expLength := 0
+	gotLength := len(batch.allocations)
+
+	if expLength != gotLength {
+		t.Errorf("Expected %v allocations, got %v", expLength, gotLength)
+	}
+
+	for _, line := range batch.allocations {
+		if line == line1 {
+			t.Errorf("line2 was not deallocated")
+		}
+	}
+}

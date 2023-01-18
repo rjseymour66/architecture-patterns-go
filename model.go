@@ -25,7 +25,7 @@ type Batch struct {
 }
 
 // NewBatch returns a batch.
-func NewBatch(ref, sku string, qty int, eta time.Time, alloc []OrderLine) *Batch {
+func NewBatch(ref, sku string, eta time.Time, qty int, alloc []OrderLine) *Batch {
 	return &Batch{
 		Ref:          ref,
 		Sku:          sku,
@@ -44,8 +44,8 @@ func (b *Batch) allocate(line OrderLine) error {
 	return errors.New("cannot allocate orderline")
 }
 
-// deAllocate
-func (b *Batch) deAllocate(line OrderLine) error {
+// deallocate
+func (b *Batch) deallocate(line OrderLine) error {
 	for i, l := range b.allocations {
 		if l == b.allocations[i] {
 			b.allocations[i] = b.allocations[len(b.allocations)-1]
